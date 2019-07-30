@@ -36,7 +36,6 @@ class DB {
 			if($this->_query->execute()) {
 				$this->_results = $this->_query->fetchAll(PDO::FETCH_OBJ);
 				$this->_count = $this->_query->rowCount();
-				var_dump($this->_results);
 			}	else {
 				$this->_error = true;
 			}
@@ -46,14 +45,77 @@ class DB {
 	}
 
 	public function action($action, $table, $where = array()) {
+		$operators = array('>', '<', '=', '>=', '<=');
+		$field 		= $where[0];
+		$operator 	= $where[1];
+		$value 		= $where[2];
 
+		if(in_array($operator, $operators)) {
+			$sql = "{$action} FROM {$table} WHERE {$field} {$operator} ?";
+			if(!$this->query($sql, array($value))->error()) {
+				return $this;
+			}
+		}
+
+		return false;
 	}
 
 	public function get($table, $where) {
+		return $this->action('SELECT *', $table, $where);
 
 	}
 	public function deltet($table, $where) {
+		return $this->action('DELETE', $table, $where);
+	}
 
+	public function insert($table, $fields=array()) {
+		$key = array_keys($fields);
+		$values = null;
+		$x = 1;
+
+		foreach($fields as $field) {
+			$values .= '?';
+			if($x<count($fields)) {
+				$values .= ', ';
+			}
+			$x++;
+		}
+
+		$x = 1;
+		$sql = "INSERT INTO users (`". implode('`,`', $key) ."`) VALUES ({$values})";
+		if(!$this->query($sql, $fields)->error()) {
+			return true;
+		} 
+		return false;
+	}
+
+	public function update($table, $id, $fields) {
+		$set = '';
+		$x = 1;
+		foreach($fields as $name => $value) {
+			$set .= "{$name} = ?";
+			if($x<count($fields)) {
+				$set .= ', ';
+			}
+			$x++;
+		}
+		$sql = "UPDATE {$table} SET {$set} wHERE id = {$id}";
+		if(!$this->query($sql, $fields)->error()) {
+			return true;
+		}
+		return false;
+	}
+
+	public function count() {
+		return $this->_count;
+	}
+
+	public function results() {
+		return $this->_results;
+	}
+
+	public function first() {
+		return $this->results()[0];
 	}
 
 	public function error() {

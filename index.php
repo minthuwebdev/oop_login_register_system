@@ -1,10 +1,9 @@
 <?php
 require_once 'core/init.php';
 
-$user = DB::getInstance()->query("SELECT * FROM users WHERE username = ? OR username = ?", array('alex', 'billy'));
+$user = DB::getInstance()->update('users',6, array(
+	'username' => 'MT',
+	'password' => 'new-password',
+	'name' => 'New Dale'
 
-if($user->error()) {
-	echo 'No users';
-}	else {
-	echo 'OK';
-}
+));
