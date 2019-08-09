@@ -19,6 +19,7 @@ class User {
 			}
 		}
 	}
+	//tes....
 
 	public function create($fields = array()) {
 		if(!$this->_db->insert('users', $fields)) {
