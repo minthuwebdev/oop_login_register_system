@@ -11,11 +11,13 @@ if(Input::exists()) {
 
 		if($validation->passed()) {
 			$user = new User();
-			$login = $user->login(Input::get('username'), Input::get('password'));
+
+			$remember = (Input::get('remember') === 'on') ? true : false;
+			$login = $user->login(Input::get('username'), Input::get('password'), $remember);
 
 
 			if($login) {
-				echo 'success';
+				Redirect::to('index.php');
 			} else {
 				echo 'Sorry, looging in failed';
 			}
@@ -43,6 +45,12 @@ if(Input::exists()) {
 	<div class="field">
 		<label for="password">Password</label>
 		<input type="password" name="password" id="password" autocomplete="off">
+	</div>
+
+	<div class="field">
+		<label for="remember">
+			<input type="checkbox" id="remember" name="remember"> Remember
+		</label>
 	</div>
 
 	<input type="hidden" name="token" value="<?php echo Token::generate(); ?>">
