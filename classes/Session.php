@@ -1,5 +1,6 @@
 <?php
 class Session {
+
     public static function exists($name) {
         return (isset($_SESSION[$name])) ? true : false;
     }
@@ -27,4 +28,5 @@ class Session {
             self::put($name, $string);
         }
     }
+    
 }

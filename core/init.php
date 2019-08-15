@@ -24,3 +24,13 @@ spl_autoload_register(function ($class) {
 // $db = new DB();
 
 require_once 'functions/sanitize.php';
+// echo Cookie::exists(Config::get('remember/cookie_name'));
+if(Cookie::exists(Config::get('remember/cookie_name')) && !Session::exists(Config::get('session/session_name'))) {
+	$hash = Cookie::get(Config::get('remember/cookie_name'));
+	$hasCheck = DB::getInstance()->get('users_session', array('hash', '=', $hash));
+
+	if($hasCheck->count()) {
+		$user = new User($hasCheck->first()->user_id);
+		$user->login();
+	}
+}
